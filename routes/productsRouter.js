@@ -3,6 +3,8 @@ const {
   getProducts,
   getProductById,
   registerProduct,
+  editProduct,
+  deleteProduct,
 } = require('../controllers/productsController');
 const { checkName } = require('../middlewares/validation');
 
@@ -12,6 +14,12 @@ productsRouter.get('/', getProducts);
 
 productsRouter.get('/:id', getProductById);
 
-productsRouter.post('/', checkName, registerProduct);
+productsRouter.use(checkName);
+
+productsRouter.post('/', registerProduct);
+
+productsRouter.put('/:id', editProduct);
+
+productsRouter.delete('/:id', deleteProduct);
 
 module.exports = productsRouter;

@@ -1,4 +1,10 @@
-const { getAll, getById, postProduct } = require('../models/productsModel');
+const {
+  getAll,
+  getById,
+  postProduct,
+  putProduct,
+  deleteProduct,
+} = require('../models/productsModel');
 
 const getProductsArr = async () => {
   const products = await getAll();
@@ -18,8 +24,22 @@ const createProduct = async ({ name, quantity }) => {
   return { id, name, quantity };
 };
 
+const updateProduct = async ({ id, name, quantity }) => {
+  const updatedProduct = await putProduct({ id, name, quantity });
+  if (!updatedProduct.affectedRows) return { code: 404, message: 'Product not found' };
+  return { id, name, quantity };
+};
+
+const excludeProduct = async (id) => {
+  const result = await deleteProduct(id);
+  if (!result.affectedRows) return { code: 404, message: 'Product not found' };
+  return { code: 204 };
+};
+
 module.exports = {
   getProductsArr,
   getProductsById,
   createProduct,
+  updateProduct,
+  excludeProduct,
 };

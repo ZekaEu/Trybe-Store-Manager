@@ -6,7 +6,15 @@ const {
   editProduct,
   deleteProduct,
 } = require('../controllers/productsController');
-const { checkName } = require('../middlewares/validation');
+const {
+  checkName,
+  checkChar,
+  checkLength,
+  checkQuantity,
+  checkValue,
+  checkProduct,
+  checkProductQuantity,
+} = require('../middlewares/validation');
 
 const productsRouter = express.Router();
 
@@ -14,7 +22,15 @@ productsRouter.get('/', getProducts);
 
 productsRouter.get('/:id', getProductById);
 
-productsRouter.use(checkName);
+productsRouter.use(
+  checkName,
+  checkChar,
+  checkLength,
+  checkQuantity,
+  checkValue,
+  checkProduct,
+  checkProductQuantity,
+  );
 
 productsRouter.post('/', registerProduct);
 

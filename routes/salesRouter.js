@@ -9,11 +9,11 @@ const { checkProduct, checkProductQuantity } = require('../middlewares/validatio
 
 const salesRouter = express.Router();
 
+salesRouter.use(checkProduct, checkProductQuantity);
+
 salesRouter.get('/', getSales);
 
 salesRouter.get('/:id', getSaleById);
-
-salesRouter.use(checkProduct, checkProductQuantity);
 
 salesRouter.post('/', registerSale);
 

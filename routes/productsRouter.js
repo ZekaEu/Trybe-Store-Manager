@@ -18,10 +18,6 @@ const {
 
 const productsRouter = express.Router();
 
-productsRouter.get('/', getProducts);
-
-productsRouter.get('/:id', getProductById);
-
 productsRouter.use(
   checkName,
   checkChar,
@@ -31,6 +27,10 @@ productsRouter.use(
   checkProduct,
   checkProductQuantity,
   );
+
+productsRouter.get('/', getProducts);
+
+productsRouter.get('/:id', getProductById);
 
 productsRouter.post('/', registerProduct);
 

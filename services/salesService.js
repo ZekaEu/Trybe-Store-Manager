@@ -28,7 +28,7 @@ const getSalesById = async (id) => {
 };
 
 const createQueryArray = (array) => {
-  const matriz = array.map((obj) => [obj.productId, obj.quantity]);
+  const matriz = array.map((data) => [data.productId, data.quantity]);
    let queryArray = [];
    for (let i = 0; i < matriz.length; i += 1) {
     queryArray = [...queryArray, ...matriz[i]];

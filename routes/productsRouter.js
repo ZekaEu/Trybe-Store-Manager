@@ -18,6 +18,10 @@ const {
 
 const productsRouter = express.Router();
 
+productsRouter.get('/', getProducts);
+
+productsRouter.get('/:id', getProductById);
+
 productsRouter.use(
   checkName,
   checkChar,
@@ -28,13 +32,23 @@ productsRouter.use(
   checkProductQuantity,
   );
 
-productsRouter.get('/', getProducts);
+productsRouter.post('/', checkName,
+checkChar,
+checkLength,
+checkQuantity,
+checkValue,
+checkProduct,
+checkProductQuantity,
+registerProduct);
 
-productsRouter.get('/:id', getProductById);
-
-productsRouter.post('/', registerProduct);
-
-productsRouter.put('/:id', editProduct);
+productsRouter.put('/:id', checkName,
+checkChar,
+checkLength,
+checkQuantity,
+checkValue,
+checkProduct,
+checkProductQuantity,
+editProduct);
 
 productsRouter.delete('/:id', deleteProduct);
 

@@ -1,55 +1,40 @@
-const {
-  getAll,
-  getById,
-  postSale,
-  putSale,
-} = require('../models/salesModel');
+const Sales = require('../models/salesModel');
 
-const serialize = (data) => ({
-  saleId: data.sale_id,
-  productId: data.product_id,
-  quantity: data.quantity,
-  date: data.date,
-});
-
-const getSalesArr = async () => {
-  const result = await getAll();
-  const salesArr = result.map((data) => (serialize(data)));
-  return salesArr;
+const getAll = async () => {
+  const sales = await Sales.getAll();
+  return sales;
 };
 
-const getSalesById = async (id) => {
-  const result = await getById(id);
-  if (result.length) {
-    const saleById = result.map((data) => (serialize(data)));
-    return saleById;
-  }
-  return result;
+const getById = async (id) => {
+  const sale = await Sales.getById(id);
+  if (!sale) return null;
+  return sale;
 };
 
-const createQueryArray = (array) => {
-  const matriz = array.map((data) => [data.productId, data.quantity]);
-   let queryArray = [];
-   for (let i = 0; i < matriz.length; i += 1) {
-    queryArray = [...queryArray, ...matriz[i]];
-   }
-   return queryArray;
+const create = async (salesArr) => {
+  const sale = await Sales.create(salesArr);
+  if (!sale) return null;
+  return sale;
 };
 
-const createSale = async (productArray) => {
-  const queryArray = createQueryArray(productArray);
-  const result = await postSale(productArray, queryArray);
-  return result;
+const update = async (saleArr, id) => {
+  const sale = await Sales.getById(id);
+  if (!sale) return null;
+  const newSale = await Sales.update(saleArr, id);
+  return newSale;
 };
 
-const updateSale = async (id, productArray) => {
-  const result = await putSale(id, productArray);
-  return result;
+const exclude = async (id) => {
+  const checkId = await Sales.getById(id);
+  if (!checkId) return false;
+  await Sales.exclude(id);
+  return true;
 };
 
 module.exports = {
-  getSalesArr,
-  getSalesById,
-  createSale,
-  updateSale,
+  getAll,
+  getById,
+  create,
+  update,
+  exclude,
 };

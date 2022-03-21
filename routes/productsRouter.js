@@ -1,55 +1,16 @@
 const express = require('express');
-const {
-  getProducts,
-  getProductById,
-  registerProduct,
-  editProduct,
-  deleteProduct,
-} = require('../controllers/productsController');
-const {
-  checkName,
-  checkChar,
-  checkLength,
-  checkQuantity,
-  checkValue,
-  checkProduct,
-  checkProductQuantity,
-} = require('../middlewares/validation');
+const productsController = require('../controllers/productsController');
 
 const productsRouter = express.Router();
 
-productsRouter.get('/', getProducts);
+productsRouter.post('/', productsController.create);
 
-productsRouter.get('/:id', getProductById);
+productsRouter.get('/', productsController.getAll);
 
-productsRouter.use(
-  checkName,
-  checkChar,
-  checkLength,
-  checkQuantity,
-  checkValue,
-  checkProduct,
-  checkProductQuantity,
-  );
+productsRouter.get('/:id', productsController.getById);
 
-productsRouter.post('/', checkName,
-checkChar,
-checkLength,
-checkQuantity,
-checkValue,
-checkProduct,
-checkProductQuantity,
-registerProduct);
+productsRouter.put('/:id', productsController.update);
 
-productsRouter.put('/:id', checkName,
-checkChar,
-checkLength,
-checkQuantity,
-checkValue,
-checkProduct,
-checkProductQuantity,
-editProduct);
-
-productsRouter.delete('/:id', deleteProduct);
+productsRouter.delete('/:id', productsController.exclude);
 
 module.exports = productsRouter;

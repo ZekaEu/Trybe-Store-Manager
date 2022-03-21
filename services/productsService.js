@@ -1,45 +1,47 @@
-const {
-  getAll,
-  getById,
-  postProduct,
-  putProduct,
-  deleteProduct,
-} = require('../models/productsModel');
+const Product = require('../models/productsModel');
 
-const getProductsArr = async () => {
-  const products = await getAll();
+const getAll = async () => {
+  const products = await Product.getAll();
   return products;
 };
 
-const getProductsById = async (ProductId) => {
-  const products = await getById(ProductId);
-  if (products === null) return null;
-  return products;
+const getById = async (id) => {
+  const product = await Product.getById(id);
+  if (!product) return null;
+  return product;
 };
 
-const createProduct = async ({ name, quantity }) => {
-  const newProduct = await postProduct({ name, quantity });
-  const id = newProduct.insertId;
+const create = async ({ name, quantity }) => {
+  const getNames = await Product.getAll();
+  const checkName = getNames.find((p) => p.name === name);
+  if (checkName) return false;
 
-  return { id, name, quantity };
+  const { id } = await Product.create({ name, quantity });
+  return {
+    id,
+    name,
+    quantity,
+  };
 };
 
-const updateProduct = async ({ id, name, quantity }) => {
-  const updatedProduct = await putProduct({ id, name, quantity });
-  if (!updatedProduct.affectedRows) return { code: 404, message: 'Product not found' };
-  return { id, name, quantity };
+const update = async ({ id, name, quantity }) => {
+  const checkID = await Product.getById(id);
+  if (!checkID) return false;
+  const newProduct = await Product.update({ id, name, quantity });
+  return newProduct;
 };
 
-const excludeProduct = async (id) => {
-  const result = await deleteProduct(id);
-  if (!result.affectedRows) return { code: 404, message: 'Product not found' };
-  return { code: 204 };
+const exclude = async (id) => {
+  const checkID = await Product.getById(id);
+  if (!checkID) return false;
+  await Product.exclude(id);
+  return true;
 };
 
 module.exports = {
-  getProductsArr,
-  getProductsById,
-  createProduct,
-  updateProduct,
-  excludeProduct,
+  create,
+  getAll,
+  getById,
+  update,
+  exclude,
 };

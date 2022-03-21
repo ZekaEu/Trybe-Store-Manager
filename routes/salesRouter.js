@@ -1,22 +1,16 @@
 const express = require('express');
-const {
-  getSales,
-  getSaleById,
-  registerSale,
-  editSale,
-} = require('../controllers/salesController');
-const { checkProduct, checkProductQuantity } = require('../middlewares/validation');
+const salesController = require('../controllers/salesController');
 
 const salesRouter = express.Router();
 
-salesRouter.get('/', getSales);
+salesRouter.post('/', salesController.create);
 
-salesRouter.get('/:id', getSaleById);
+salesRouter.get('/', salesController.getAll);
 
-salesRouter.use(checkProduct, checkProductQuantity);
+salesRouter.get('/:id', salesController.getById);
 
-salesRouter.post('/', registerSale);
+salesRouter.put('/:id', salesController.update);
 
-salesRouter.put('/:id', editSale);
+salesRouter.delete('/:id', salesController.exclude);
 
 module.exports = salesRouter;

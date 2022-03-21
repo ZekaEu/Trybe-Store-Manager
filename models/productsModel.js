@@ -1,54 +1,56 @@
 const connection = require('./connection');
 
 const getAll = async () => {
-  const [result] = await connection.execute(
+  const [products] = await connection.execute(
     'SELECT * FROM StoreManager.products;',
   );
-  return result;
+  return products;
 };
 
-const getById = async (ProductId) => {
-  const [result] = await connection.execute(
+const getById = async (id) => {
+  const [products] = await connection.execute(
     'SELECT * FROM StoreManager.products WHERE id = ?;',
-    [ProductId],
+    [id],
   );
-  if (!result.length) return { code: 404, message: 'Product not found' };
-  const { id, name, quantity } = result[0];
+  if (!products.length) return null;
+  return products[0];
+};
+
+const create = async ({ name, quantity }) => {
+  const [product] = await connection.execute(
+    'INSERT INTO StoreManager.products (name, quantity) VALUES (?, ?);',
+    [name, quantity],
+  );
   return {
-    id,
+    id: product.insertId,
     name,
     quantity,
   };
 };
 
-const postProduct = async ({ name, quantity }) => {
-  const [result] = await connection.execute(
-    'INSERT INTO StoreManager.products (name, quantity) VALUES (?, ?);',
-    [name, quantity],
-  );
-  return result;
-};
-
-const putProduct = async ({ id, name, quantity }) => {
-  const [result] = await connection.execute(
-    'UPDATE StoreManager.products SET name = ?, quantity = ? where id = ?;',
+const update = async ({ id, name, quantity }) => {
+  const [product] = await connection.execute(
+    'UPDATE StoreManager.products SET name = ?, quantity = ? WHERE id = ?;',
     [name, quantity, id],
   );
-  return result;
+  return {
+    id: product.insertId,
+    name,
+    quantity,
+  };
 };
 
-const deleteProduct = async (id) => {
-  const [result] = await connection.execute(
+const exclude = async (id) => {
+  await connection.execute(
     'DELETE FROM StoreManager.products WHERE id = ?;',
     [id],
   );
-  return result;
 };
 
 module.exports = {
+  create,
   getAll,
   getById,
-  postProduct,
-  putProduct,
-  deleteProduct,
+  update,
+  exclude,
 };

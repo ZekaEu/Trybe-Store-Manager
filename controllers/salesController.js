@@ -1,55 +1,62 @@
-const {
-  getSalesArr,
-  getSalesById,
-  createSale,
-  updateSale,
-} = require('../services/salesService');
+const salesService = require('../services/salesService');
 
-const getSales = async (_req, res, next) => {
+const getAll = async (_req, res, next) => {
   try {
-    const result = await getSalesArr();
-    return res.status(200).json(result);
+    const sales = await salesService.getAll();
+    res.status(200).json(sales);
   } catch (e) {
     next(e);
   }
 };
 
-const getSaleById = async (req, res, next) => {
+const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await getSalesById(+id);
-    if (result.code) return res.status(result.code).json({ message: result.message });
-    return res.status(200).json(result);
+    const sale = await salesService.getById(id);
+    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+    res.status(200).json(sale);
   } catch (e) {
     next(e);
   }
 };
 
-const registerSale = async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
-    const saleArray = [...req.body];
-    const result = await createSale(saleArray);
-    return res.status(201).json(result);
+    const salesArr = [...req.body];
+    const newSales = await salesService.create(salesArr);
+    res.status(201).json(newSales);
   } catch (e) {
     next(e);
   }
 };
 
-const editSale = async (req, res, next) => {
+const update = async (req, res, next) => {
+  try {
+    const salesArr = [...req.body];
+    const { id } = req.params;
+    const newSale = await salesService.update(salesArr, id);
+    if (!newSale) return res.status(404).json({ message: 'Sale not found' });
+    res.status(200).json(newSale);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const exclude = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const saleArray = [...req.body];
-    const result = await updateSale(id, saleArray);
-    if (result.code) return res.status(result.code).json({ message: result.message });
-    return res.status(200).json(result);
+    const result = await salesService.exclude(id);
+    if (!result) return res.status(404).json({ message: 'Sale not found' });
+    res.status(204).end();
   } catch (e) {
     next(e);
   }
 };
 
 module.exports = {
-  getSales,
-  getSaleById,
-  registerSale,
-  editSale,
+  getAll,
+  getById,
+  create,
+  update,
+  exclude,
 };

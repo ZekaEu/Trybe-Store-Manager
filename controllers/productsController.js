@@ -1,70 +1,63 @@
-const {
-  getProductsArr,
-  getProductsById,
-  createProduct,
-  updateProduct,
-  excludeProduct,
-} = require('../services/productsService');
+const productsService = require('../services/productsService');
 
-const getProducts = async (_req, res, next) => {
-  try {
-    const result = await getProductsArr();
-    return res.status(200).json(result);
+const getAll = async (_req, res, next) => {
+    try {
+    const products = await productsService.getAll();
+    res.status(200).json(products);
   } catch (e) {
     next(e);
   }
 };
 
-const getProductById = async (req, res, next) => {
+const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await getProductsById(+id);
-    if (result.code) return res.status(result.code).json({ message: result.message });
-    return res.status(200).json(result);
+    const product = await productsService.getById(id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    res.status(200).json(product);
   } catch (e) {
     next(e);
   }
 };
 
-const registerProduct = async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
     const { name, quantity } = req.body;
-    const result = await createProduct({ name, quantity });
-    return res.status(201).json(result);
+    const product = await productsService.create({ name, quantity });
+    if (!product) return res.status(409).json({ message: 'Product already exists' });
+    res.status(201).json(product);
   } catch (e) {
     next(e);
   }
 };
 
-const editProduct = async (req, res, next) => {
+const update = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, quantity } = req.body;
-    const result = await updateProduct({ id, name, quantity });
-    if (result.code) return res.status(result.code).json({ message: result.message });
-    res.status(200).json(result);
+    const newProduct = await productsService.update({ id, name, quantity });
+    if (!newProduct) return res.status(404).json({ message: 'Product not found' });
+    res.status(200).json(newProduct);
   } catch (e) {
     next(e);
   }
 };
 
-const deleteProduct = async (req, res, next) => {
+const exclude = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await excludeProduct(+id);
-    if (result.code === 404) {
-      return res.status(result.code).json({ message: result.message });
-    }
-    return res.status(result.code).end();
+    const result = await productsService.exclude(id);
+    if (!result) return res.status(404).json({ message: 'Product not found' });
+    res.status(204).end();
   } catch (e) {
     next(e);
   }
 };
 
 module.exports = {
-  getProducts,
-  getProductById,
-  registerProduct,
-  editProduct,
-  deleteProduct,
+  create,
+  getAll,
+  getById,
+  update,
+  exclude,
 };

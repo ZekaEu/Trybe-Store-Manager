@@ -1,18 +1,25 @@
 const connection = require('./connection');
 
+const serialize = (data) => ({
+  saleId: data.sale_id,
+  productId: data.product_id,
+  quantity: data.quantity,
+  date: data.date,
+});
+
 const getAll = async () => {
-  const [result] = await connection.execute(
+  const [sales] = await connection.execute(
     `SELECT p.*, s.date
     FROM StoreManager.sales_products AS p
     JOIN StoreManager.sales AS s
     ON s.id = p.sale_id
     ORDER BY p.sale_id, p.product_id;`,
     );
-  return result;
+  return sales.map(serialize);
 };
 
 const getById = async (id) => {
-  const [result] = await connection.execute(
+  const [sale] = await connection.execute(
     `SELECT p.product_id, p.quantity, s.date 
     FROM StoreManager.sales_products AS p
     JOIN StoreManager.sales AS s
@@ -20,53 +27,53 @@ const getById = async (id) => {
     WHERE p.sale_id = ?;`,
     [id],
   );
-  if (!result.length) return { code: 404, message: 'Sale not found' };
-  return result;
+  if (!sale.length) return null;
+  return sale.map(serialize);
 };
 
-const postSale = async (productsArray, queryArray) => {
-  const [salesQuery] = await connection.execute(
-    'INSERT INTO StoreManager.sales (date) VALUES (NOW());',
+const create = async (salesArr) => {
+  const [sale] = await connection.execute(
+    'INSERT INTO StoreManager.sales (date) VALUE (NOW());',
   );
-  const id = salesQuery.insertId;
-  let query = `INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity)
-    VALUES (${id}, ?, ?)`;
-  
-  for (let i = 1; i < productsArray.length; i += 1) {
-    query += `, (${id}, ?, ?)`;
-  }
-
-  await connection.execute(
-    query,
-    queryArray,
-  );
+  await salesArr.forEach((s) => connection.execute(
+    `INSERT INTO StoreManager.sales_products
+    (sale_id, product_id, quantity) VALUES(?, ?, ?);`,
+    [sale.insertId, s.productId, s.quantity],
+  ));
 
   return {
-    id,
-    itemsSold: productsArray,
+    id: sale.insertId,
+    itemsSold: salesArr,
   };
 };
 
-const putSale = async (id, productsArray) => {
-  const { productId, quantity } = productsArray[0];
-  const [result] = await connection.execute(
+const update = async (saleArr, id) => {
+  const [sale] = await connection.execute(
     `UPDATE StoreManager.sales_products
-    SET product_id = ?, quantity = ?
-    WHERE sale_id = ?`,
-    [productId, quantity, id],
+    SET product_id = ?, quantity = ? WHERE sale_id = ?;`,
+    [saleArr[0].productId, saleArr[0].quantity, id],
   );
-
-  if (!result.affectedRows) return { code: 404, message: 'Sale not found' };
-
   return {
-    saleId: id,
-    itemUpdated: productsArray,
+    saleId: sale.insertId,
+    itemUpdated: saleArr,
   };
+};
+
+const exclude = async (id) => {
+  await connection.execute(
+    'DELETE FROM StoreManager.sales WHERE id = ?',
+    [id],
+  );
+  await connection.execute(
+    'DELETE FROM StoreManager.sales_products WHERE sale_id = ?',
+    [id],
+  );
 };
 
 module.exports = {
   getAll,
   getById,
-  postSale,
-  putSale,
+  create,
+  update,
+  exclude,
 };

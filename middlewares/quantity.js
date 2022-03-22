@@ -17,6 +17,7 @@ const plusQuantity = async (req, res, next) => {
   try {
     const { id } = req.params;
     const sale = await salesService.getById(id);
+    if (!sale) return next();
     sale.forEach(async ({ productId, quantity }) => {
       await productsService.plusQuantity(productId, quantity);
     });

@@ -22,8 +22,12 @@ salesRouter.put(
   validationMiddleware.checkSales,
   validationMiddleware.checkSaleQuantity,
   salesController.update,
-  );
+);
 
-salesRouter.delete('/:id', quantityMiddleware.plusQuantity, salesController.exclude);
+salesRouter.delete(
+  '/:id',
+  quantityMiddleware.plusQuantity,
+  salesController.exclude,
+);
 
 module.exports = salesRouter;

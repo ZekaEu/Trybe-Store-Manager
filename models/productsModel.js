@@ -47,10 +47,30 @@ const exclude = async (id) => {
   );
 };
 
+const minusQuantity = async (id, quantity) => {
+  await connection.execute(
+    `UPDATE StoreManager.products
+    SET quantity = quantity - ?
+    WHERE id = ?;`,
+    [quantity, id],
+  );
+};
+
+const plusQuantity = async (id, quantity) => {
+  await connection.execute(
+    `UPDATE StoreManager.products
+    SET quantity = quantity + ?
+    WHERE id = ?;`,
+    [quantity, id],
+  );
+};
+
 module.exports = {
   create,
   getAll,
   getById,
   update,
   exclude,
+  minusQuantity,
+  plusQuantity,
 };

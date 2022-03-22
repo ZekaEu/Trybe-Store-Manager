@@ -34,10 +34,20 @@ const exclude = async (id) => {
   return true;
 };
 
+const minusQuantity = async (id, quantity) => {
+  await Product.minusQuantity(id, quantity);
+};
+
+const plusQuantity = async (id, quantity) => {
+  await Product.plusQuantity(id, quantity);
+};
+
 module.exports = {
   create,
   getAll,
   getById,
   update,
   exclude,
+  minusQuantity,
+  plusQuantity,
 };

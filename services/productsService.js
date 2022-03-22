@@ -12,10 +12,6 @@ const getById = async (id) => {
 };
 
 const create = async ({ name, quantity }) => {
-  const getNames = await Product.getAll();
-  const checkName = getNames.find((p) => p.name === name);
-  if (checkName) return false;
-
   const { id } = await Product.create({ name, quantity });
   return {
     id,

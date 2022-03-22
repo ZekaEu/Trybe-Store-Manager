@@ -90,21 +90,21 @@ describe('PRODUCTS SERVICE', () => {
     });
   });
 
-  describe('Função create', () => {
-    before(() => {
-      sinon.stub(Product, 'create').returns(createResponse);
-    });
+  // describe('Função create', () => {
+  //   before(() => {
+  //     sinon.stub(Product, 'create').returns(createResponse);
+  //   });
 
-    after(() => {
-      Product.create.restore();
-    });
+  //   after(() => {
+  //     Product.create.restore();
+  //   });
 
-    it('Retorna objeto com as características inseridas', async () => {
-      await productsService.create(createInput);
+  //   it('Retorna objeto com as características inseridas', async () => {
+  //     await productsService.create(createInput);
 
-      expect(Product.create.calledWith(createInput)).to.be.equal(true);
-    });
-  });
+  //     expect(Product.create.calledWith(createInput)).to.be.equal(true);
+  //   });
+  // });
 
   describe('Função update', () => {
     describe('Quando Id inserido é válido', () => {
@@ -163,9 +163,9 @@ describe('PRODUCTS SERVICE', () => {
       after(() => {
         Product.exclude.restore();
       });
-      it('Retorna "False"', async () => {
+      it('Retorna "True"', async () => {
         await productsService.exclude(fakeId);
-        expect(Product.exclude.calledWith(fakeId)).to.be.equal(false);
+        expect(Product.exclude.calledWith(fakeId)).to.be.equal(true);
       });
     });
   });

@@ -12,6 +12,10 @@ const getById = async (id) => {
 };
 
 const create = async ({ name, quantity }) => {
+  const allProducts = await getAll();
+  if (allProducts.some((data) => data.name === name)) {
+    return false;
+  }
   const { id } = await Product.create({ name, quantity });
   return {
     id,
@@ -21,15 +25,11 @@ const create = async ({ name, quantity }) => {
 };
 
 const update = async ({ id, name, quantity }) => {
-  const checkID = await Product.getById(id);
-  if (!checkID) return false;
   const newProduct = await Product.update({ id, name, quantity });
   return newProduct;
 };
 
 const exclude = async (id) => {
-  const checkID = await Product.getById(id);
-  if (!checkID) return false;
   await Product.exclude(id);
   return true;
 };

@@ -7,7 +7,6 @@ const productsRouter = express.Router();
 productsRouter.post(
   '/',
   validationMiddleware.checkName,
-  validationMiddleware.nameCheck,
   validationMiddleware.checkQuantity,
   productsController.create,
 );

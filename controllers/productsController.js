@@ -23,8 +23,12 @@ const getById = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { name, quantity } = req.body;
+    const allProducts = await productsService.getAll();
+    if (allProducts.some((data) => data.name === name)) {
+      return res.status(409).json({ message: 'Product already exists' });
+    }
     const product = await productsService.create({ name, quantity });
-    if (!product) return res.status(409).json({ message: 'Product already exists' });
+    // if (!product) return res.status(409).json({ message: 'Product already exists' });
     res.status(201).json(product);
   } catch (e) {
     next(e);

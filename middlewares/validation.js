@@ -1,24 +1,9 @@
-const productsService = require('../services/productsService');
-
 const checkName = (req, res, next) => {
   try {
     const { name } = req.body;
     if (!name) return res.status(400).json({ message: '"name" is required' });
     if (name.length < 5) {
       return res.status(422).json({ message: '"name" length must be at least 5 characters long' });
-    }
-    next();
-  } catch (e) {
-    next(e);
-  }
-};
-
-const nameCheck = async (req, res, next) => {
-  try {
-    const { name } = req.body;
-    const allProducts = await productsService.getAll();
-    if (allProducts.some((data) => data.name === name)) {
-      return res.status(409).json({ message: 'Product already exists' });
     }
     next();
   } catch (e) {
@@ -70,6 +55,5 @@ module.exports = {
   checkName,
   checkQuantity,
   checkSales,
-  nameCheck,
   checkSaleQuantity,
 };

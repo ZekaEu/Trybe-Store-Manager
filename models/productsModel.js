@@ -41,10 +41,13 @@ const update = async ({ id, name, quantity }) => {
 };
 
 const exclude = async (id) => {
-  await connection.execute(
+  const query = await connection.execute(
     'DELETE FROM StoreManager.products WHERE id = ?;',
     [id],
   );
+  return {
+    affectedRows: query.affectedRows,
+  };
 };
 
 const minusQuantity = async (id, quantity) => {
